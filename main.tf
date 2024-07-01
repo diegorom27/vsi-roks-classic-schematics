@@ -21,7 +21,7 @@ provider ibm {
 ##############################################################################
 # Resource Group
 ##############################################################################
-data ibm_resource_group resource_group {
+data ibm_resource_group group {
     provider = ibm.primary
     name = var.resource_group
 }
@@ -58,7 +58,6 @@ resource "ibm_compute_vm_instance" "control_plane" {
     memory               = 16000
     disks                = [25]
     local_disk           = true
-    resource_group = data.ibm_resource_group.group.id
     hostname = each.value.hostname
 }
 
@@ -103,7 +102,6 @@ resource "ibm_compute_vm_instance" "worker_nodes" {
     memory               = 16000
     disks                = [25]
     local_disk           = true
-    resource_group = data.ibm_resource_group.group.id
     hostname = each.value.hostname
 }
 
@@ -146,7 +144,6 @@ resource "ibm_compute_vm_instance" "ODF" {
     memory               = 32000
     disks                = [25]
     local_disk           = true
-    resource_group = data.ibm_resource_group.group.id
     hostname = each.value.hostname
 }
 
