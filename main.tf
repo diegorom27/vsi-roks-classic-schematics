@@ -35,6 +35,8 @@ resource "ibm_storage_block" "control_plane_storage" {
   for_each = {
     for vm in var.control_plane : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
+  type = "Endurance"
+  os_format_type = "Linux"
   name           = "${each.key}"
   location       = "dal13"
   capacity       = each.value
@@ -74,6 +76,8 @@ resource "ibm_storage_block" "worker_nodes_storage" {
   for_each = {
     for vm in var.worker_nodes : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
+  type = "Endurance"
+  os_format_type = "Linux"
   name         = "${each.key}"
   location     = "dal13"
   capacity     = 100 # Example capacity in GiB; adjust as needed
@@ -112,6 +116,8 @@ resource "ibm_storage_block" "ODF_nodes_storage" {
   for_each = {
     for vm in var.ODF : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
+  type = "Endurance"
+  os_format_type = "Linux"
   name         = "${each.key}"
   location     = "dal13"
   capacity     = 100 # Example capacity in GiB; adjust as needed
