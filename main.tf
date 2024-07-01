@@ -41,7 +41,6 @@ resource "ibm_storage_block" "control_plane_storage" {
   datacenter       = "dal13"
   capacity       = each.value
   iops           = 3
-  resource_group = data.ibm_resource_group.group.id
 }
 
 resource "ibm_compute_vm_instance" "control_plane" {
@@ -52,7 +51,7 @@ resource "ibm_compute_vm_instance" "control_plane" {
     hourly_billing       = true
     private_network_only = false
     cores                = 4
-    memory               = 16000
+    memory               = 16384
     disks                = [25]
     local_disk           = true
     hostname = each.value.hostname
@@ -79,9 +78,8 @@ resource "ibm_storage_block" "worker_nodes_storage" {
   os_format_type = "Linux"
   id         = "${each.key}"
   datacenter     = "dal13"
-  capacity     = 100 # Example capacity in GiB; adjust as needed
-  share_protocol = "NFS" # Common protocol for file shares
-  resource_group = var.resource_group_id # Ensure you have the correct resource group ID
+  capacity       = each.value
+  iops           = 3
 }
 
 resource "ibm_compute_vm_instance" "worker_nodes" {
@@ -92,7 +90,7 @@ resource "ibm_compute_vm_instance" "worker_nodes" {
     hourly_billing       = true
     private_network_only = false
     cores                = 4
-    memory               = 16000
+    memory               = 16384
     disks                = [25]
     local_disk           = true
     hostname = each.value.hostname
@@ -119,9 +117,8 @@ resource "ibm_storage_block" "ODF_nodes_storage" {
   os_format_type = "Linux"
   id         = "${each.key}"
   datacenter     = "dal13"
-  capacity     = 100 # Example capacity in GiB; adjust as needed
-  share_protocol = "NFS" # Common protocol for file shares
-  resource_group = var.resource_group_id # Ensure you have the correct resource group ID
+  capacity       = each.value
+  iops           = 3
 }
 resource "ibm_compute_vm_instance" "ODF" {
     for_each             = { for vm in var.ODF : vm.hostname => vm }
@@ -131,7 +128,7 @@ resource "ibm_compute_vm_instance" "ODF" {
     hourly_billing       = true
     private_network_only = false
     cores                = 8
-    memory               = 32000
+    memory               = 32768
     disks                = [25]
     local_disk           = true
     hostname = each.value.hostname
