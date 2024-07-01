@@ -31,20 +31,16 @@ data ibm_resource_group group {
 # OS_RHEL_8_X_64_BIT_PER_PROCESSOR_LICENSING      REDHAT_8_64
 ##############################################################################
 # Crear almacenamiento en bloque para cada disco
-resource "ibm_is_volume" "control_plane_storage" {
-    for_each = {
-        for vm in var.control_plane : vm.hostname => flatten([for idx, size in vm.disks : {
-            vm_hostname = vm.hostname
-            index       = idx
-            size        = size
-        }])
-    }
-    resource_group = data.ibm_resource_group.group.id
-    name         = "${each.value.vm_hostname}-disk-${each.value.index + 1}"
-    storage_type = "performance"
-    size         = each.value.size
-    iops         = 3
-    location     = "dal13"
+resource "ibm_storage_block" "control_plane_storage" {
+  for_each = {
+    for vm in var.control_plane : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
+  }
+  name           = "${each.key}"
+  location       = "dal13"
+  capacity       = each.value
+  storage_type   = "performance" # or "standard"
+  iops           = 3
+  resource_group = data.ibm_resource_group.group.id
 }
 
 resource "ibm_compute_vm_instance" "control_plane" {
@@ -61,34 +57,28 @@ resource "ibm_compute_vm_instance" "control_plane" {
     hostname = each.value.hostname
 }
 
-# Adjuntar cada disco a la instancia correspondiente
 resource "ibm_compute_vm_instance_block_device_attachment" "control_plane_storage_attachment" {
   for_each = {
     for vm in var.control_plane : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
-  instance_id     = ibm_compute_vm_instance.control_plane[split("-", each.key)[0]].id
-  block_volume_id = ibm_is_volume.control_plane_storage[each.key].id
-  device_name     = "xvd${char(97 + tonumber(split("-", each.key)[1]))}" # a, b, c, etc.
+  instance_id     = ibm_compute_vm_instance.control_plane[each.key].id
+  block_volume_id = ibm_storage_block.control_plane_storage[each.key].id
+  device_name     = "xvd${char(97 + idx)}" # a, b, c, etc.
 }
 
 ##############################################################################
 # Worker nodes
 ##############################################################################
 
-resource "ibm_is_volume" "worker_nodes_storage" {
-    for_each = {
-        for vm in var.worker_nodes : vm.hostname => flatten([for idx, size in vm.disks : {
-            vm_hostname = vm.hostname
-            index       = idx
-            size        = size
-        }])
-    }
-    resource_group = data.ibm_resource_group.group.id
-    name         = "${each.value.vm_hostname}-disk-${each.value.index + 1}"
-    storage_type = "performance"
-    size         = each.value.size
-    iops         = 3
-    location     = "dal13"
+resource "ibm_storage_block" "worker_nodes_storage" {
+  for_each = {
+    for vm in var.worker_nodes : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
+  }
+  name         = "${each.key}"
+  location     = "dal13"
+  capacity     = 100 # Example capacity in GiB; adjust as needed
+  share_protocol = "NFS" # Common protocol for file shares
+  resource_group = var.resource_group_id # Ensure you have the correct resource group ID
 }
 
 resource "ibm_compute_vm_instance" "worker_nodes" {
@@ -118,20 +108,15 @@ resource "ibm_compute_vm_instance_block_device_attachment" "worker_nodes_storage
 # ODF
 ##############################################################################
 
-resource "ibm_is_volume" "ODF_nodes_storage" {
-    for_each = {
-        for vm in var.ODF : vm.hostname => flatten([for idx, size in vm.disks : {
-            vm_hostname = vm.hostname
-            index       = idx
-            size        = size
-        }])
-    }
-    resource_group = data.ibm_resource_group.group.id
-    name         = "${each.value.vm_hostname}-disk-${each.value.index + 1}"
-    storage_type = "performance"
-    size         = each.value.size
-    iops         = 3
-    location     = "dal13"
+resource "ibm_storage_block" "ODF_nodes_storage" {
+  for_each = {
+    for vm in var.ODF : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
+  }
+  name         = "${each.key}"
+  location     = "dal13"
+  capacity     = 100 # Example capacity in GiB; adjust as needed
+  share_protocol = "NFS" # Common protocol for file shares
+  resource_group = var.resource_group_id # Ensure you have the correct resource group ID
 }
 resource "ibm_compute_vm_instance" "ODF" {
     for_each             = { for vm in var.ODF : vm.hostname => vm }
