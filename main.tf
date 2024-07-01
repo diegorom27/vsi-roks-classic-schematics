@@ -38,7 +38,7 @@ resource "ibm_storage_block" "control_plane_storage" {
   type = "Endurance"
   os_format_type = "Linux"
   name           = "${each.key}"
-  location       = "dal13"
+  datacenter       = "dal13"
   capacity       = each.value
   storage_type   = "performance" # or "standard"
   iops           = 3
@@ -79,7 +79,7 @@ resource "ibm_storage_block" "worker_nodes_storage" {
   type = "Endurance"
   os_format_type = "Linux"
   name         = "${each.key}"
-  location     = "dal13"
+  datacenter     = "dal13"
   capacity     = 100 # Example capacity in GiB; adjust as needed
   share_protocol = "NFS" # Common protocol for file shares
   resource_group = var.resource_group_id # Ensure you have the correct resource group ID
@@ -119,7 +119,7 @@ resource "ibm_storage_block" "ODF_nodes_storage" {
   type = "Endurance"
   os_format_type = "Linux"
   name         = "${each.key}"
-  location     = "dal13"
+  datacenter     = "dal13"
   capacity     = 100 # Example capacity in GiB; adjust as needed
   share_protocol = "NFS" # Common protocol for file shares
   resource_group = var.resource_group_id # Ensure you have the correct resource group ID
