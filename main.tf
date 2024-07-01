@@ -35,7 +35,7 @@ resource "ibm_storage_block" "control_plane_storage" {
   for_each = {
     for vm in var.control_plane : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
-  type = "Endurance"
+  type = "standard"
   os_format_type = "Linux"
   id           = "${each.key}"
   datacenter       = "dal13"
@@ -76,7 +76,7 @@ resource "ibm_storage_block" "worker_nodes_storage" {
   for_each = {
     for vm in var.worker_nodes : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
-  type = "Endurance"
+  type = "standard"
   os_format_type = "Linux"
   id         = "${each.key}"
   datacenter     = "dal13"
@@ -116,7 +116,7 @@ resource "ibm_storage_block" "ODF_nodes_storage" {
   for_each = {
     for vm in var.ODF : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
-  type = "Endurance"
+  type = "standard"
   os_format_type = "Linux"
   id         = "${each.key}"
   datacenter     = "dal13"
