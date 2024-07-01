@@ -40,7 +40,6 @@ resource "ibm_storage_block" "control_plane_storage" {
   id           = "${each.key}"
   datacenter       = "dal13"
   capacity       = each.value
-  storage_type   = "performance" # or "standard"
   iops           = 3
   resource_group = data.ibm_resource_group.group.id
 }
