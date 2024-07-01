@@ -65,14 +65,11 @@ resource "ibm_compute_vm_instance" "control_plane" {
 # Adjuntar cada disco a la instancia correspondiente
 resource "ibm_compute_vm_instance_block_device_attachment" "control_plane_storage_attachment" {
   for_each = {
-    for vm in var.control_plane : vm.hostname => flatten([for idx, size in vm.disks : {
-      vm_hostname = vm.hostname
-      index       = idx
-    }])
+    for vm in var.control_plane : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
-  instance_id     = ibm_compute_vm_instance.control_plane[each.value.vm_hostname].id
+  instance_id     = ibm_compute_vm_instance.control_plane[split("-", each.key)[0]].id
   block_volume_id = ibm_block_storage.control_plane_storage[each.key].id
-  device_name     = "xvd${char(97 + each.value.index)}" # a, b, c, etc.
+  device_name     = "xvd${char(97 + tonumber(split("-", each.key)[1]))}" # a, b, c, etc.
 }
 
 ##############################################################################
@@ -111,16 +108,13 @@ resource "ibm_compute_vm_instance" "worker_nodes" {
 }
 
 # Adjuntar cada disco a la instancia correspondiente
-resource "ibm_compute_vm_instance_block_device_attachment" "woker_nodes_storage_attachment" {
+resource "ibm_compute_vm_instance_block_device_attachment" "worker_nodes_storage_attachment" {
   for_each = {
-    for vm in var.worker_nodes : vm.hostname => flatten([for idx, size in vm.disks : {
-      vm_hostname = vm.hostname
-      index       = idx
-    }])
+    for vm in var.worker_nodes : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
-  instance_id     = ibm_compute_vm_instance.worker_nodes[each.value.vm_hostname].id
+  instance_id     = ibm_compute_vm_instance.worker_nodes[split("-", each.key)[0]].id
   block_volume_id = ibm_block_storage.worker_nodes_storage[each.key].id
-  device_name     = "xvd${char(97 + each.value.index)}" # a, b, c, etc.
+  device_name     = "xvd${char(97 + tonumber(split("-", each.key)[1]))}" # a, b, c, etc.
 }
 ##############################################################################
 # ODF
@@ -159,12 +153,9 @@ resource "ibm_compute_vm_instance" "ODF" {
 # Adjuntar cada disco a la instancia correspondiente
 resource "ibm_compute_vm_instance_block_device_attachment" "ODF_storage_attachment" {
   for_each = {
-    for vm in var.ODF : vm.hostname => flatten([for idx, size in vm.disks : {
-      vm_hostname = vm.hostname
-      index       = idx
-    }])
+    for vm in var.ODF : vm.hostname => { for idx, size in vm.disks : "${vm.hostname}-${idx}" => size }
   }
-  instance_id     = ibm_compute_vm_instance.ODF[each.value.vm_hostname].id
+  instance_id     = ibm_compute_vm_instance.ODF[split("-", each.key)[0]].id
   block_volume_id = ibm_block_storage.ODF_nodes_storage[each.key].id
-  device_name     = "xvd${char(97 + each.value.index)}" # a, b, c, etc.
+  device_name     = "xvd${char(97 + tonumber(split("-", each.key)[1]))}" # a, b, c, etc.
 }
