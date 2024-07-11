@@ -39,9 +39,10 @@ resource "ibm_compute_vm_instance" "control_plane" {
     datacenter           = "dal13"
     hourly_billing       = true
     private_network_only = false
+    network_speed        = 10
     cores                = 4
     memory               = 16384
-    disks                = [25]
+    disks                = each.value.disks
     local_disk           = false
     hostname = each.value.hostname
 }
