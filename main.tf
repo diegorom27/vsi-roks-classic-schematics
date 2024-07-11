@@ -43,7 +43,7 @@ resource "ibm_compute_vm_instance" "control_plane" {
     cores                = 4
     memory               = 16384
     disks                = each.value.disks
-    local_disk           = false
+    local_disk           = true
     hostname = each.value.hostname
 }
 
