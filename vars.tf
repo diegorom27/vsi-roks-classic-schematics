@@ -40,15 +40,15 @@ variable control_plane {
     default = [
         {
             hostname = "controlplane01.satellite-demo.cloud"
-            disks    = [125]
+            disks    = [25,125]
         },
         {
             hostname = "controlplane02.satellite-demo.cloud"
-            disks    = [125]
+            disks    = [25,125]
         },
         {
             hostname = "controlplane03.satellite-demo.cloud"
-            disks    = [125]
+            disks    = [25,125]
         },
     ]
 }
