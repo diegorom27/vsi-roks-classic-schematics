@@ -21,8 +21,11 @@ provider ibm {
 ##############################################################################
 # VLAN
 ##############################################################################
-data "ibm_network_vlan" "cluster_vlan" {
-    name = var.vlan_name
+data "ibm_network_vlan" "public_vlan" {
+    name = var.public_vlan_name
+}
+data "ibm_network_vlan" "private_vlan" {
+    name = var.private_vlan_name
 }
 ##############################################################################
 # Resource Group
@@ -49,8 +52,8 @@ resource "ibm_compute_vm_instance" "control_plane" {
     disks                = each.value.disks
     local_disk           = false
     hostname = each.value.hostname
-    public_vlan_id = data.ibm_network_vlan.cluster_vlan.id
-    private_vlan_id = data.ibm_network_vlan.cluster_vlan.id
+    public_vlan_id = data.ibm_network_vlan.public_vlan.id
+    private_vlan_id = data.ibm_network_vlan.private_vlan.id
 }
 
 ##############################################################################
@@ -69,8 +72,8 @@ resource "ibm_compute_vm_instance" "control_plane" {
 #    disks                = each.value.disks
 #    local_disk           = false
 #    hostname = each.value.hostname
-#    public_vlan_id = data.ibm_network_vlan.cluster_vlan.id
-#    private_vlan_id = data.ibm_network_vlan.cluster_vlan.id
+#    public_vlan_id = data.ibm_network_vlan.public_vlan.id
+#    private_vlan_id = data.ibm_network_vlan.private_vlan.id
 #}
 
 ##############################################################################
@@ -89,6 +92,6 @@ resource "ibm_compute_vm_instance" "control_plane" {
 #    disks                = each.value.disks
 #    local_disk           = false
 #    hostname = each.value.hostname
-#    public_vlan_id = data.ibm_network_vlan.cluster_vlan.id
-#    private_vlan_id = data.ibm_network_vlan.cluster_vlan.id
+#    public_vlan_id = data.ibm_network_vlan.public_vlan.id
+#    private_vlan_id = data.ibm_network_vlan.private_vlan.id
 #}

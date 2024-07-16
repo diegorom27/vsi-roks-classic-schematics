@@ -30,12 +30,16 @@ variable resource_group {
       condition     = can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.resource_group))
     }
 }
-variable vlan_name {
+variable public_vlan_name {
+    description = "vlan name for the cluster"
+    type        = string
+    default     = "dal13.fcr02.781"
+}
+variable private_vlan_name {
     description = "vlan name for the cluster"
     type        = string
     default     = "dal13.bcr02.815"
 }
-
 variable control_plane {
     description = "List of vm for control plane"
     type = list(object({
