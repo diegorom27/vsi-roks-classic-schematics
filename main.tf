@@ -19,6 +19,12 @@ provider ibm {
     max_retries = 20
 }
 ##############################################################################
+# VLAN
+##############################################################################
+data "ibm_network_vlan" "cluster_vlan" {
+    name = var.vlan_name
+}
+##############################################################################
 # Resource Group
 ##############################################################################
 data ibm_resource_group group {
@@ -30,8 +36,6 @@ data ibm_resource_group group {
 # ibmcloud sl hardware create-options
 # OS_RHEL_8_X_64_BIT_PER_PROCESSOR_LICENSING      REDHAT_8_64
 ##############################################################################
-# Crear almacenamiento en bloque para cada disco
-
 resource "ibm_compute_vm_instance" "control_plane" {
     for_each             = { for vm in var.control_plane : vm.hostname => vm }
     domain               = "clusteropenshift.com"
@@ -45,6 +49,8 @@ resource "ibm_compute_vm_instance" "control_plane" {
     disks                = each.value.disks
     local_disk           = false
     hostname = each.value.hostname
+    public_vlan_id = data.ibm_network_vlan.cluster_vlan.id
+    private_vlan_id = data.ibm_network_vlan.cluster_vlan.id
 }
 
 ##############################################################################
@@ -63,6 +69,8 @@ resource "ibm_compute_vm_instance" "control_plane" {
 #    disks                = each.value.disks
 #    local_disk           = false
 #    hostname = each.value.hostname
+#    public_vlan_id = data.ibm_network_vlan.cluster_vlan.id
+#    private_vlan_id = data.ibm_network_vlan.cluster_vlan.id
 #}
 
 ##############################################################################
@@ -81,4 +89,6 @@ resource "ibm_compute_vm_instance" "control_plane" {
 #    disks                = each.value.disks
 #    local_disk           = false
 #    hostname = each.value.hostname
+#    public_vlan_id = data.ibm_network_vlan.cluster_vlan.id
+#    private_vlan_id = data.ibm_network_vlan.cluster_vlan.id
 #}

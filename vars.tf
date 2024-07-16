@@ -30,6 +30,11 @@ variable resource_group {
       condition     = can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.resource_group))
     }
 }
+variable vlan_name {
+    description = "vlan name for the cluster"
+    type        = string
+    default     = "dal13.bcr02.815"
+}
 
 variable control_plane {
     description = "List of vm for control plane"
@@ -40,11 +45,11 @@ variable control_plane {
     default = [
         {
             hostname = "controlplane01.satellite-demo.cloud"
-            disks    = [100]
+            disks    = [25,100]
         },
         {
             hostname = "controlplane02.satellite-demo.cloud"
-            disks    = [100]
+            disks    = [25,100]
         },
         {
             hostname = "controlplane03.satellite-demo.cloud"
@@ -62,15 +67,15 @@ variable worker_nodes {
     default     = [
         {
             hostname     = "worker01.satellite-demo.cloud"
-            disks = [100]
+            disks = [25,100]
         },
         {
             hostname     = "worker02.satellite-demo.cloud"
-            disks = [100]
+            disks = [25,100]
         },
         {
             hostname     = "worker03.satellite-demo.cloud "
-            disks = [100]
+            disks = [25,100]
         }
     ]
 }
@@ -84,15 +89,15 @@ variable ODF {
     default     = [
         {
             hostname     = "worker01.satellite-demo.cloud"
-            disks = [100,100,300]
+            disks = [25,100,100,300]
         },
         {
             hostname     = "worker02.satellite-demo.cloud"
-            disks = [100,100,300]
+            disks = [25,100,100,300]
         },
         {
             hostname     = "worker03.satellite-demo.cloud "
-            disks = [100,100,300]
+            disks = [25,100,100,300]
         }
     ]
 }
