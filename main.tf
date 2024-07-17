@@ -28,13 +28,6 @@ data "ibm_network_vlan" "private_vlan" {
     name = var.private_vlan_name
 }
 ##############################################################################
-# Resource Group
-##############################################################################
-data ibm_resource_group group {
-    provider = ibm.primary
-    name = var.resource_group
-}
-##############################################################################
 # Control plane
 # ibmcloud sl hardware create-options
 # OS_RHEL_8_X_64_BIT_PER_PROCESSOR_LICENSING      REDHAT_8_64
