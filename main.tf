@@ -60,21 +60,21 @@ resource "ibm_compute_vm_instance" "control_plane" {
 # Worker nodes
 ##############################################################################
 
-#resource "ibm_compute_vm_instance" "worker_nodes" {
-#    for_each             = { for vm in var.worker_nodes : vm.hostname => vm }
-#    domain               = "clusteropenshift.com"
-#    os_reference_code    = "REDHAT_8_64"
-#    datacenter           = "dal13"
-#    hourly_billing       = true
-#    private_network_only = false
-#    cores                = 4
-#    memory               = 16384
-#    disks                = each.value.disks
-#    local_disk           = false
-#    hostname = each.value.hostname
-#    public_vlan_id = data.ibm_network_vlan.public_vlan.id
-#    private_vlan_id = data.ibm_network_vlan.private_vlan.id
-#}
+resource "ibm_compute_vm_instance" "worker_nodes" {
+    for_each             = { for vm in var.worker_nodes : vm.hostname => vm }
+    domain               = "clusteropenshift.com"
+    os_reference_code    = "REDHAT_8_64"
+    datacenter           = "dal13"
+    hourly_billing       = true
+    private_network_only = false
+    cores                = 4
+    memory               = 16384
+    disks                = each.value.disks
+    local_disk           = false
+    hostname = each.value.hostname
+    public_vlan_id = data.ibm_network_vlan.public_vlan.id
+    private_vlan_id = data.ibm_network_vlan.private_vlan.id
+}
 
 ##############################################################################
 # ODF
