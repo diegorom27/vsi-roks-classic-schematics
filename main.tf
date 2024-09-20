@@ -36,7 +36,7 @@ resource "ibm_compute_vm_instance" "control_plane" {
     for_each             = { for vm in var.control_plane : vm.hostname => vm }
     domain               = "clusteropenshift.com"
     os_reference_code    = "REDHAT_8_64"
-    datacenter           = "dal13"
+    datacenter           = var.datacenter
     hourly_billing       = true
     private_network_only = false
     network_speed        = 10
@@ -57,7 +57,7 @@ resource "ibm_compute_vm_instance" "worker_nodes" {
     for_each             = { for vm in var.worker_nodes : vm.hostname => vm }
     domain               = "clusteropenshift.com"
     os_reference_code    = "REDHAT_8_64"
-    datacenter           = "dal13"
+    datacenter           = var.datacenter
     hourly_billing       = true
     private_network_only = false
     cores                = 4
@@ -77,7 +77,7 @@ resource "ibm_compute_vm_instance" "worker_nodes" {
 #    for_each             = { for vm in var.ODF : vm.hostname => vm }
 #    domain               = "clusteropenshift.com"
 #    os_reference_code    = "REDHAT_8_64"
-#    datacenter           = "dal13"
+#    datacenter           = var.datacenter
 #    hourly_billing       = true
 #    private_network_only = false
 #    cores                = 8
