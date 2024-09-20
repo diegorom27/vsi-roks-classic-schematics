@@ -30,6 +30,10 @@ variable private_vlan_name {
     type        = string
     default     = "dal13.bcr02.815"
 }
+variable datacenter {
+    type        = string
+    default     = "dal10"
+}
 variable control_plane {
     description = "List of vm for control plane"
     type = list(object({
